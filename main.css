@@ -1,28 +1,117 @@
 html {
-    background: #fff;
-    -webkit-font-smoothing: antialiased;
+    background: #ffffff;
+    font-family: sans-serif;
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%
 }
 
 body {
-    background: #fff;
+    background: #ffffff;
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.06);
     color: #000;
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, alliance, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+
     font-size: 1.5em;
     line-height: 1.5;
     margin: 0 auto;
     padding: 0em 5em 0em;
 }
 
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+main,
+menu,
+nav,
+section {
+    display: block
+}
+
+audio,
+canvas,
+progress,
+video {
+    display: inline-block
+}
+
+
+@font-face {
+    font-family: alliance;
+    src: url(../fonts/alliance-no-2-regular.woff2) format("woff2"), url(../fonts/alliance-no-2-regular.woff) format("woff");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: alliance;
+    src: url(../fonts/alliance-no-2-regular-italic.woff2) format("woff2"), url(../fonts/alliance-no-2-regular-italic.woff) format("woff");
+    font-weight: 400;
+    font-style: italic
+}
+
+@font-face {
+    font-family: alliance;
+    src: url(../fonts/alliance-no-2-light.woff2) format("woff2"), url(../fonts/alliance-no-2-light.woff) format("woff");
+    font-weight: 300;
+    font-style: normal
+}
+
+@font-face {
+    font-family: alliance;
+    src: url(../fonts/alliance-no-2-light-italic.woff2) format("woff2"), url(../fonts/alliance-no-2-light-italic.woff) format("woff");
+    font-weight: 300;
+    font-style: italic
+}
+
+@font-face {
+    font-family: alliance;
+    src: url(../fonts/alliance-no-2-medium.woff2) format("woff2"), url(../fonts/alliance-no-2-medium.woff) format("woff");
+    font-weight: 500;
+    font-style: normal
+}
+
+@font-face {
+    font-family: alliance;
+    src: url(../fonts/alliance-no-2-semibold.woff2) format("woff2"), url(../fonts/alliance-no-2-semibold.woff) format("woff");
+    font-weight: 600;
+    font-style: normal
+}
+
+@font-face {
+    font-family: alliance;
+    src: url(../fonts/alliance-no-2-bold.woff2) format("woff2"), url(../fonts/alliance-no-2-bold.woff) format("woff");
+    font-weight: 700;
+    font-style: normal
+}
+
+@font-face {
+    font-family: SF-Mono;
+    src: url(../fonts/sfmono-regular-webfont.woff2) format("woff2"), url(../fonts/sfmono-regular-webfont.woff) format("woff");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: SF-Mono;
+    src: url(../fonts/sfmono-medium-webfont.woff2) format("woff2"), url(../fonts/sfmono-medium-webfont.woff) format("woff");
+    font-weight: 500;
+    font-style: normal
+}
+
 h1 {
+    font-family: alliance, sans-serif;
     font-size: 2.5em;
-    text-align: center;
     margin-top: 1.0em;
     margin-bottom: 1.0em;
 }
 
+
 h2 {
-    text-align: center;
+    font-family: alliance, sans-serif;
     margin-top: 1.5em;
     margin-bottom: 1.5em;
 }
@@ -33,21 +122,25 @@ h3,
 h4,
 h5,
 h6 {
+    font-family: alliance, sans-serif;
     text-align: left;
-    color: #000;
     font-weight: 600;
     line-height: 0;
 
 }
 
-
-a {
-    color: #0083e8;
+mark {
+    background-color: #ff0;
+    color: #000
 }
 
 b,
 strong {
     font-weight: 600;
+}
+
+textarea {
+    overflow: auto
 }
 
 samp {
@@ -60,28 +153,49 @@ hr {
 }
 
 p {
-
+    font-family: alliance, sans-serif;
+    color: dimgray;
     padding: 0em 2em 0em;
 }
 
+a {
+    background-color: transparent
+}
+
 a:link {
-    color: #000;
+    color: dimgray;
     text-decoration: none;
 }
 
 a:visited {
-    color: #000;
+    color: dimgray;
     text-decoration: none;
 }
 
 a:hover {
     color: lightgray;
-
+    text-decoration: underline
 }
 
 a:active {
     color: rgba(0, 0, 255);
 }
+
+kbd {
+    display: inline-block;
+    padding: 3px 5px;
+    font: 11px SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+    line-height: 10px;
+    color: #444d56;
+    vertical-align: middle;
+    background-color: #fafbfc;
+    border: solid 1px #d1d5da;
+    border-bottom-color: #d1d5da;
+    border-radius: 3px;
+    -webkit-box-shadow: inset 0 -1px 0 #d1d5da;
+    box-shadow: inset 0 -1px 0 #d1d5da
+}
+
 
 .column {
     text-align: center;
@@ -107,7 +221,7 @@ img:active {
 
 img:hover {
     transform: rotate(180deg);
-    filter: drop-shadow(1px 1px 10px green);
+    filter: drop-shadow(1px 1px 10px blue);
 }
 
 
@@ -123,10 +237,10 @@ img:hover {
 
 
     body {
-        background: #fff;
+
         box-shadow: 0 0 2px rgba(0, 0, 0, 0.06);
         color: #000;
-        font-family: 'Noto Sans KR', sans-serif;
+        font-family: alliance, sans-serif;
         font-size: 1.0em;
         line-height: 1.0em;
         margin: 0 auto;
@@ -135,16 +249,15 @@ img:hover {
 
 
     h1 {
+        font-family: alliance, sans-serif;
         font-size: 3.5em;
-        text-align: center;
         margin-top: 1.0em;
         margin-bottom: 1.0em;
     }
 
     h2 {
-
+        font-family: alliance, sans-serif;
         font-size: 2.0em;
-        text-align: center;
         margin-top: 1.5em;
         margin-bottom: 1.5em;
     }
@@ -155,16 +268,16 @@ img:hover {
     h4,
     h5,
     h6 {
+        font-family: alliance, sans-serif;
         text-align: center;
-        color: #000;
         font-weight: 600;
         line-height: 0;
-
     }
 
 
     p {
-
+        font-family: alliance, sans-serif;
+        color: dimgray;
         padding: 0em 2em 1em;
         font-size: 1.5em;
         line-height: 1.5em;
