@@ -241,7 +241,7 @@ img:hover {
         box-shadow: 0 0 2px rgba(0, 0, 0, 0.06);
         color: #000;
         font-family: alliance, sans-serif;
-        font-size: 1.0em;
+        font-size: 1.5em;
         line-height: 1.0em;
         margin: 0 auto;
         padding: 0em 0em 2em;
@@ -250,14 +250,14 @@ img:hover {
 
     h1 {
         font-family: alliance, sans-serif;
-        font-size: 3.5em;
+        font-size: 4.0em;
         margin-top: 1.0em;
         margin-bottom: 1.0em;
     }
 
     h2 {
         font-family: alliance, sans-serif;
-        font-size: 2.0em;
+        font-size: 2.5em;
         margin-top: 1.5em;
         margin-bottom: 1.5em;
     }
@@ -279,7 +279,7 @@ img:hover {
         font-family: alliance, sans-serif;
         color: dimgray;
         padding: 0em 2em 1em;
-        font-size: 1.5em;
+        font-size: 2em;
         line-height: 1.5em;
         margin: 0 auto;
     }
