@@ -1,346 +1,122 @@
-html {
-    background: #ffffff;
-    font-family: sans-serif;
-    -ms-text-size-adjust: 100%;
-    -webkit-text-size-adjust: 100%
-}
-
-body {
-    background: #ffffff;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.06);
-    color: #000;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, alliance, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-
-    font-size: 1.5em;
-    line-height: 1.5;
-    margin: 0 auto;
-    padding: 0em 5em 0em;
-}
-
-article,
-aside,
-details,
-figcaption,
-figure,
-footer,
-header,
-main,
-menu,
-nav,
-section {
-    display: block
-}
-
-audio,
-canvas,
-progress,
-video {
-    display: inline-block
-}
-
-
-@font-face {
-    font-family: alliance;
-    src: url(../fonts/alliance-no-2-regular.woff2) format("woff2"), url(../fonts/alliance-no-2-regular.woff) format("woff");
-    font-weight: 400;
-    font-style: normal
-}
-
-@font-face {
-    font-family: alliance;
-    src: url(../fonts/alliance-no-2-regular-italic.woff2) format("woff2"), url(../fonts/alliance-no-2-regular-italic.woff) format("woff");
-    font-weight: 400;
-    font-style: italic
-}
-
-@font-face {
-    font-family: alliance;
-    src: url(../fonts/alliance-no-2-light.woff2) format("woff2"), url(../fonts/alliance-no-2-light.woff) format("woff");
-    font-weight: 300;
-    font-style: normal
-}
-
-@font-face {
-    font-family: alliance;
-    src: url(../fonts/alliance-no-2-light-italic.woff2) format("woff2"), url(../fonts/alliance-no-2-light-italic.woff) format("woff");
-    font-weight: 300;
-    font-style: italic
-}
-
-@font-face {
-    font-family: alliance;
-    src: url(../fonts/alliance-no-2-medium.woff2) format("woff2"), url(../fonts/alliance-no-2-medium.woff) format("woff");
-    font-weight: 500;
-    font-style: normal
-}
-
-@font-face {
-    font-family: alliance;
-    src: url(../fonts/alliance-no-2-semibold.woff2) format("woff2"), url(../fonts/alliance-no-2-semibold.woff) format("woff");
-    font-weight: 600;
-    font-style: normal
-}
-
-@font-face {
-    font-family: alliance;
-    src: url(../fonts/alliance-no-2-bold.woff2) format("woff2"), url(../fonts/alliance-no-2-bold.woff) format("woff");
-    font-weight: 700;
-    font-style: normal
-}
-
-@font-face {
-    font-family: SF-Mono;
-    src: url(../fonts/sfmono-regular-webfont.woff2) format("woff2"), url(../fonts/sfmono-regular-webfont.woff) format("woff");
-    font-weight: 400;
-    font-style: normal
-}
-
-@font-face {
-    font-family: SF-Mono;
-    src: url(../fonts/sfmono-medium-webfont.woff2) format("woff2"), url(../fonts/sfmono-medium-webfont.woff) format("woff");
-    font-weight: 500;
-    font-style: normal
-}
-
-h1 {
-    font-family: alliance, sans-serif;
-    font-size: 2.5em;
-    margin-top: 1.0em;
-    margin-bottom: 1.0em;
-}
-
-
-h2 {
-    font-family: alliance, sans-serif;
-    margin-top: 1.5em;
-    margin-bottom: 1.5em;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-    font-family: alliance, sans-serif;
-    text-align: left;
-    font-weight: 600;
-    line-height: 0;
-
-}
-
-mark {
-    background-color: #ff0;
-    color: #000
-}
-
-b,
-strong {
-    font-weight: 600;
-}
-
-textarea {
-    overflow: auto
-}
-
-samp {
-    display: none;
-}
-
-hr {
-
-    border: 1px solid white;
-}
-
-p {
-    font-family: alliance, sans-serif;
-    color: dimgray;
-    padding: 0em 2em 0em;
-}
-
-a {
-    background-color: transparent
-}
-
-a:link {
-    color: dimgray;
-    text-decoration: none;
-}
-
-a:visited {
-    color: dimgray;
-    text-decoration: none;
-}
-
-a:hover {
-    color: lightgray;
-    text-decoration: underline
-}
-
-a:active {
-    color: rgba(0, 0, 255);
-}
-
-kbd {
-    display: inline-block;
-    padding: 3px 5px;
-    font: 11px SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
-    line-height: 10px;
-    color: #444d56;
-    vertical-align: middle;
-    background-color: #fafbfc;
-    border: solid 1px #d1d5da;
-    border-bottom-color: #d1d5da;
-    border-radius: 3px;
-    -webkit-box-shadow: inset 0 -1px 0 #d1d5da;
-    box-shadow: inset 0 -1px 0 #d1d5da
-}
-
-
-.column {
-    text-align: center;
-    float: left;
-    width: 25%;
-}
-
-.column2 {
-    text-align: center;
-    float: left;
-    width: 50%;
-}
-
-
-img {
-    transition: width 3s, height 3s, transform 3s;
-}
-
-img:active {
-
-    transform: rotate(180deg);
-}
-
-img:hover {
-    transform: rotate(180deg);
-    filter: drop-shadow(1px 1px 10px blue);
-}
-
-
-/* Clear floats after the columns */
-.row:after {
-    content: "";
-    display: table;
-    clear: both;
-}
-
-/* At mobile display */
-@media screen and (max-width: 1242px) {
-
-
-    body {
-
-        box-shadow: 0 0 2px rgba(0, 0, 0, 0.06);
-        color: #000;
-        font-family: alliance, sans-serif;
-        font-size: 1.5em;
-        line-height: 1.0em;
-        margin: 0 auto;
-        padding: 0em 0em 2em;
-    }
-
-
-    h1 {
-        font-family: alliance, sans-serif;
-        font-size: 4.0em;
-        margin-top: 1.0em;
-        margin-bottom: 1.0em;
-    }
-
-    h2 {
-        font-family: alliance, sans-serif;
-        font-size: 2.5em;
-        margin-top: 1.5em;
-        margin-bottom: 1.5em;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        font-family: alliance, sans-serif;
-        text-align: center;
-        font-weight: 600;
-        line-height: 0;
-    }
-
-
-    p {
-        font-family: alliance, sans-serif;
-        color: dimgray;
-        padding: 0em 2em 1em;
-        font-size: 2em;
-        line-height: 1.5em;
-        margin: 0 auto;
-    }
-
-
-    .column {
-
-        font-size: 1.5em;
-        text-align: center;
-        width: 100%;
-        margin-top: .5em;
-        margin-bottom: .5em;
-
-    }
-
-    .column2 {
-        text-align: center;
-        width: 100%;
-        margin-top: .5em;
-        margin-bottom: .5em;
-
-    }
-
-
-
-    footer {
-        text-align: center;
-        font-size: 1.0em;
-        margin-top: 1.5em;
-        margin-bottom: 1.5em;
-    }
-
-    iframe {
-        max-width: 50%;
-        max-height: 50%;
-    }
-
-
-}
-
-
-img {
-    animation: colorize 2s cubic-bezier(0, 0, .78, .36) 1;
-    background: transparent;
-    border: 5px solid rgba(0, 0, 0, 0);
-    /*display: block;*/
-    margin: 0em auto;
-    max-width: 95%;
-}
-
-/* Image effect */
-@keyframes colorize {
-    0% {
-
-        -webkit-filter: opacity(0%);
-        filter: opacity(0%);
-
-    }
-
-    100% {
-        -webkit-filter: opacity(100%);
-        filter: opacity(100%);
-    }
-}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>ARTIST GYUMI</title>
+    <meta name="description" content="2020 PrismLabo">
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<style>
+
+</style>
+
+<body>
+
+    <h1><a href="https://mdmgntc.github.io/index.html">ARTIST GYUMI</a></h1>
+
+    <hr style="border: 1px solid #fff;">
+    <h2>ABOUT</h2>
+    <p>Artist & Developer Gyumi<br>
+        Ewha Womans University<br>
+        <a href="https://goo.gl/maps/PWAQf2dkUhcF5vBh6">Seoul, South Korea</a><br>
+
+    </p>
+    <hr style="border: 1px solid #fff;">
+    <h2>PROJECT</h2>
+    <p>
+        <a href="https://madfield.github.io/2021newmediaart/index.html">2021 New Media Art</a><br>
+        <a href="https://prismlabo.github.io/main/index.html">2020 LEAP KPOP MV</a><br>
+        2020 Variable Web Font<br>
+        <a href="http://ewhamoviefesta.kr/egmf_work/traveler/">2020 EMF AMUSE</a><br>
+        2020 HIVCD GREENBEE GREENTOPIA<br>
+    </p>
+
+    <hr style="border: 1px solid #fff;">
+    <h2>OUTSOURCING</h2>
+    <p> Development for Online Web&Mobile Exhibition<br>
+        Development for Variable Web Font<br>
+        Motion Poster(2D or 3D, Off-line or Real-time)<br>
+        Interactive Web&Mobile(2D or 3D)<br>
+        Easy 3D Photogrammetry / HDRI<br>
+        Music Video<br>
+        Short Film<br>
+    </p>
+    <hr style="border: 1px solid #fff;">
+    <h2>TUTORING</h2>
+    <p>Processing(Java)<br>
+        HTML+CSS<br>
+        JavaScript<br>
+        Blender3d<br>
+        Photogrammetry / HDRI<br>
+    </p>
+    <hr style="border: 1px solid gray;">
+    <h2>TOOL</h2>
+    <p style="text-align: center;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/2/2e/Processing_3_logo.png" alt="Trulli" width="60" height="auto">
+
+        <img src="https://p5js.org/assets/img/p5js.svg" width="60" height="auto">
+
+        <img src="https://aws1.discourse-cdn.com/standard17/uploads/threejs/original/2X/c/c74c5243388bbfa21a39c3e824ddba702a623dec.png" width="60" height="auto">
+
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Brackets_Icon.svg/1200px-Brackets_Icon.svg.png" width="60" height="auto">
+
+
+
+        <img src="https://openframeworks.cc/assets/images/of-logo.svg" width="60" height="auto">
+
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/OpenCV_Logo_with_text_svg_version.svg/1200px-OpenCV_Logo_with_text_svg_version.svg.png" width="60" height="auto">
+
+
+        <img src="https://d2wvmrjymyrujw.cloudfront.net/media/uploads/products/labs/icons/alicevision.png" alt="Trulli" width="60" height="auto">
+
+
+
+        <img src="https://media-exp1.licdn.com/dms/image/C560BAQGYD5FezFTRZw/company-logo_200_200/0/1563450735653?e=2159024400&v=beta&t=PwRTuC3wPsqzgAIT2C5RuU8XNm6jknTpmyYwEX894EY" alt="Trulli" width="60" height="auto">
+
+        <img src="https://upload.wikimedia.org/wikipedia/commons/1/15/Houdini3D_icon.png" alt="Trulli" width="60" height="auto">
+
+
+
+        <img src="https://www.khronos.org/assets/uploads/ceimg/made/assets/uploads/apis/OpenGL-ES_100px_May16_225_75.png" width="170" height="auto">
+
+        <img src="https://www.khronos.org/assets/uploads/ceimg/made/assets/uploads/apis/WebGL_100px_June16_180_75.png" width="140" height="auto">
+
+        <img src="https://github.com/KhronosGroup/glTF/raw/master/specification/figures/gltf.png" width="120" height="auto">
+
+
+
+        <img src="https://visualstudio.microsoft.com/wp-content/uploads/2018/11/vsplogo.png" width="60" height="auto">
+
+        <img src="https://yt3.ggpht.com/ytc/AAUvwnifzf0a9h5PmkSSSEh_In8dRZasxvcdRpSQ2wM5SA=s88-c-k-c0x00ffffff-no-rj" width="60" height="auto">
+
+    </p>
+    <hr style="border: 1px solid #fff;">
+    <h2>CONTACT</h2>
+    <p style="text-align: center;"><a href="https://github.com/mdmgntc">
+            <img src="https://developers.google.com/site-assets/logo-github.svg" width="60" height="auto"></a>
+
+        <img src="https://www.gstatic.com/images/branding/product/2x/youtube_64dp.png" width="60" height="auto">
+
+        <a href="https://www.facebook.com/profile.php?id=100012990636503"><img src="https://pcdn.sharethis.com/wp-content/themes/sharethis-custom/assets/images/facebookimg%20copy.png" width="60" height="auto"></a>
+
+
+        <a href="https://www.rocketpunch.com/@ewhgyu?fbclid=IwAR2AIxNXmKN2TQOZOgRs9f2_C9g8iloZbi5kVRjof5-kUqv0gwcT5BgzDfk"><img src="https://static.rocketpunch.com/images/rocketpunch_logo.svg" width="60" height="auto"></a>
+
+        <a href="https://sketchfab.com/gyumi">
+            <img src="https://d2wvmrjymyrujw.cloudfront.net/media/uploads/products/labs/icons/sketchfab.png" width="60" height="auto"></a>
+
+        <a href="https://3darvr.tistory.com/">
+            <img src="https://img1.daumcdn.net/thumb/R800x0/?scode=mtistory2&fname=https%3A%2F%2Ft1.daumcdn.net%2Fcfile%2Ftistory%2F270D883555ED252B1B" width="60" height="auto"></a>
+
+
+        <a href="https://mail.google.com/mail/u/0/?tab=rm#inbox"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Gmail_icon_%282020%29.svg/1200px-Gmail_icon_%282020%29.svg.png" width="60" height="auto"></a>
+
+    </p>
+
+    <hr style="border: 1px solid #fff;">
+</body>
+
+</html>
