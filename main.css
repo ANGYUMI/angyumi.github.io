@@ -223,7 +223,6 @@ img:hover {
     filter: drop-shadow(1px 1px 10px black);
 }
 
-background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
 
 /* Clear floats after the columns */
 .row:after {
@@ -235,31 +234,31 @@ background-image: linear-gradient(to right, red, orange, yellow, green, blue, in
 /* Linear Gradients */
 
 #grad1 {
-    background-image: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+    background-image: linear-gradient(180deg, #0000ff, red, orange, yellow, green, blue, indigo, violet, #0000ff);
 }
 
 
 #grad2 {
 
-    background-image: linear-gradient(90deg, #888888, black);
+    background-image: linear-gradient(180deg, #0000ff, black, #0000ff);
 }
 
 #grad3 {
 
-    background-image: linear-gradient(90deg, #00ff80, blue, #00ff80);
+    background-image: linear-gradient(180deg, #0000ff, transparent, #00ff00, #0000ff);
 }
 
 #grad4 {
 
-    background-image: linear-gradient(-90deg, #00ff80, #8000ff);
+    background-image: linear-gradient(180deg, #0000ff, #00ff80, #8000ff, #0000ff);
 }
 
 #grad5 {
-    background: linear-gradient(-90deg, #000000, #33ccff);
+    background: linear-gradient(180deg, #0000ff, #33ccff, #0000ff);
 }
 
 #grad6 {
-    background: linear-gradient(-90deg, #ffffff, #ff00ff, #ffffff);
+    background: linear-gradient(180deg, #0000ff, #ff00ff, #0000ff);
 }
 
 
