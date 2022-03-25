@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>EwhaMetaSouvenirShop</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+	<link type="text/css" rel="stylesheet" href="main.css">
+	<link rel="icon" href="https://ank-umi.github.io/Exhibition/EwhaMetaSouvenirShop/icon/Display.png" type="image/png" sizes="16x16">
+</head>
+
+<body>
+	<div class="title">
+		<h1 style="line-height: 1;"><a href="#">EwhaMeta<br>SouvenirShop</a></h1>
+	</div>
+
+	<div class="menu">
+		<a href="https://ank-umi.github.io/Exhibition/EwhaMetaSouvenirShop/whitepaper.html">
+			<img src="https://ank-umi.github.io/Exhibition/EwhaMetaSouvenirShop/icon/WhitePaper.png" alt="button" width="50px" height="50px"></a>
+
+	    <a href="https://ank-umi.github.io/Exhibition/EwhaMetaSouvenirShop/gallery.html">
+			<img src="https://ank-umi.github.io/Exhibition/EwhaMetaSouvenirShop/icon/Gomdol.png" alt="button" width="50px" height="50px"></a>
+
+			<br>
+
+		<a href="#">
+			<img src="https://ank-umi.github.io/Exhibition/EwhaMetaSouvenirShop/icon/GetECC.png" alt="button" width="50px" height="50px"></a>
+
+		<a href="#">
+			<img src="https://ank-umi.github.io/Exhibition/EwhaMetaSouvenirShop/icon/faucet.png" alt="button" width="50px" height="50px"></a>
+
+			<br>
+
+		<a href="#">
+		    <img src="https://ank-umi.github.io/Exhibition/EwhaMetaSouvenirShop/icon/Etherscan.png" alt="button" width="50px" height="50px"></a>
+
+		<a href="#">
+			<img src="https://ank-umi.github.io/Exhibition/EwhaMetaSouvenirShop/icon/Github.png" alt="button" width="50px" height="50px"></a>
+	</div>
+
+	<script type="module">
+		import * as THREE from './threejs/three.module.js';
+        import { OrbitControls } from './threejs/OrbitControls.js';
+        import { GLTFLoader } from './threejs/GLTFLoader.js';
+        import { RGBELoader } from './threejs/RGBELoader.js';
+        import { RoughnessMipmapper } from './threejs/RoughnessMipmapper.js';
+
+			let camera, scene, renderer;
+
+			init();
+			render();
+
+			function init() {
+
+				const container = document.createElement( 'div' );
+				document.body.appendChild( container );
+
+				camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.1, 200 );
+				camera.position.set( - 2.8, 1.6, 3.7 );
+
+				scene = new THREE.Scene();
+
+				new RGBELoader()
+					.setDataType( THREE.UnsignedByteType )
+					.setPath( 'hdr/' )
+					.load( 'christmas_photo_studio_04_2k.hdr', function ( texture ) {
+						// anime_sky_ps.hdr
+						// christmas_photo_studio_04_2k.hdr
+
+						const envMap = pmremGenerator.fromEquirectangular( texture ).texture;
+
+                         scene.background = new THREE.Color( '#212ab5');
+						//#545bc8 #212ab5 #1018a4
+						
+						// scene.background = envMap;
+						scene.environment = envMap;
+
+						const light = new THREE.DirectionalLight( 0x222);
+				        light.position.set( 0, 0, 2 );
+				        scene.add( light );
+				
+						texture.dispose();
+						pmremGenerator.dispose();
+
+						render();
+
+						// model
+
+						// use of RoughnessMipmapper is optional
+						const roughnessMipmapper = new RoughnessMipmapper( renderer );
+
+						const loader = new GLTFLoader().setPath( 'model/' );
+						loader.load( 'PearBlossemECC.gltf', function ( gltf ) {
+
+							gltf.scene.traverse( function ( child ) {
+
+								if ( child.isMesh ) {
+
+									roughnessMipmapper.generateMipmaps( child.material );
+
+								}
+
+							} );
+
+							 
+							const model = gltf.scene;
+				            model.position.set( 0, 0, 0 );
+				            model.scale.set( .8, .8, .8 );
+				            scene.add( model );
+
+
+							// scene.add( gltf.scene );
+
+							roughnessMipmapper.dispose();
+
+							render();
+
+						} );
+
+					} );
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.toneMapping = THREE.ACESFilmicToneMapping;
+				renderer.toneMappingExposure = 1;
+				renderer.outputEncoding = THREE.sRGBEncoding;
+				container.appendChild( renderer.domElement );
+
+				const pmremGenerator = new THREE.PMREMGenerator( renderer );
+				pmremGenerator.compileEquirectangularShader();
+
+				const controls = new OrbitControls( camera, renderer.domElement );
+				controls.addEventListener( 'change', render ); // use if there is no animation loop
+				controls.minDistance =22;
+                controls.maxDistance = 60;
+                controls.target.set( 0, 0, - 0.2 );
+				controls.update();
+
+
+				window.addEventListener( 'resize', onWindowResize );
+
+			}
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+				render();
+
+			}
+
+			//
+
+			function render() {
+
+				renderer.render( scene, camera );
+
+			}
+
+
+		</script>
+
+</body>
+
+</html>

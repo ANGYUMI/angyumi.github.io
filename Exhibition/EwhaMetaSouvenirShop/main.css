@@ -1,0 +1,124 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap');
+
+html,
+body {
+  margin: 0;
+  background-color: transparent;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  font-family: 'Orbitron', sans-serif;
+  margin: 0;
+  line-height: 1.75;
+}
+
+p {
+  font-size: 1.2em;
+}
+
+a {
+  color: #bbb;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.title {
+  font-family: 'Orbitron', sans-serif;
+  top: 5px;
+  left: 25px;
+  position: fixed;
+  width: 100%;
+  box-sizing: border-box;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  pointer-events: none;
+  color: #bbb;
+  z-index: 2;
+  /* TODO Solve this in HTML */
+
+}
+
+.text {
+  font-family: 'Orbitron', sans-serif;
+  margin: 0 auto;
+  width: 50%;
+  margin-top: 10em;
+  margin-bottom: 10em;
+  overflow: hidden;
+  border-style: none;
+  color: #555;
+  z-index: 2;
+  /* TODO Solve this in HTML */
+  background-color: transparent;
+}
+
+.menu {
+  position: fixed;
+  margin: 0;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  padding: 1em 1em 1em;
+  z-index: 2;
+  /* TODO Solve this in HTML */
+
+}
+
+img {
+  margin: .4em;
+}
+
+.gallery {
+  float: left;
+  color: #bbb;
+  left: 0;
+  bottom: 10;
+  width: 100%;
+  padding: .5em;
+  background-color: transparent;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  padding: 1em;
+  background-color: #212ab5;
+  color: white;
+  text-align: center;
+  color: #bbb;
+}
+
+.column {
+  float: left;
+  width: 33.33%;
+  cursor: pointer;
+  background-color: #212ab5;
+}
+
+.button {
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  cursor: pointer;
+  border-radius: 16px;
+}
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+</head>
+
+<body>
+
+    <button class="enableEthereumButton">Enable Ethereum</button>
+    <h2>Account: <span class="showAccount"></span></h2>
+    
+    <script>
+        var isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
+        if(!isChrome) {
+            window.alert('Please Enter by Chrome');
+        }
+
+            if (typeof window.ethereum !== 'undefined') {
+            ethereum.request({ method: 'eth_requestAccounts' }).then(function(res) {
+                var account = res[0];
+                document.querySelector('.showAccount').innerHTML = account;
+            });
+            }
+
+            const ethereumButton = document.querySelector('.enableEthereumButton');
+
+            ethereumButton.addEventListener('click', () => {
+            //Will Start the metamask extension
+            if (typeof window.ethereum !== 'undefined') {
+              console.log('MetaMask is installed!');
+            } else {
+              location.href="/download.html";
+              return;
+            }
+
+                try {
+                    ethereum.request({ method: 'eth_requestAccounts' });
+                } catch(e) {
+                    window.alert('No way');
+                }
+            });
+
+            
+    </script>
+</body>
+</html>

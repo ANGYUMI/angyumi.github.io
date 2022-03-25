@@ -1,0 +1,241 @@
+* {
+    color: #fff;
+}
+
+body {
+    background: #333;
+
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    padding: 0;
+    margin: 0 auto;
+}
+
+.menu {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    margin-top: 20px;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.menu-list {
+    margin-right: 60px;
+}
+
+
+.work {
+    margin: 0 auto;
+    width: 600px;
+    margin-top: 200px;
+    font-size: 20px;
+    font-weight: 500;
+
+}
+
+.work-list {
+    margin-bottom: 15px;
+    /* border: 2px solid #fff; */
+    /* margin: 6px 2px; */
+    padding: 10px 20px;
+    text-decoration: none;
+    cursor: pointer;
+    border-radius: 16px;
+}
+
+.content {
+    width: 1280px;
+    margin: 0 auto;
+    /* margin-left: 400px; */
+    margin-top: 160px;
+    margin-bottom: 400px;
+}
+
+.content-title {
+    margin-bottom: 60px;
+}
+
+.text {
+    margin-bottom: 100px;
+}
+
+.text-mob {
+ 
+    width: 400px;
+ 
+}
+
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    font-size: 24px;
+
+    font-weight: 600;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 1em;
+}
+
+
+
+img {
+    margin: 0 auto;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    cursor: pointer;
+}
+
+
+/* scrollbar */
+::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #555;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #111;
+}
+
+/* selection */
+::selection {
+    background-color: #555;
+    color: #fff;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+
+    font-weight: 600;
+    line-height: 1.4;
+    padding: 0px 0px 0px;
+}
+
+h1 {
+    font-size: 24px;
+}
+
+h2 {
+    font-size: 20px;
+}
+
+h3 {
+    font-size: 18px;
+
+
+}
+
+h4 {
+    font-size: 16px;
+}
+
+p,
+ol,
+dd,
+dt {
+    font-size: 16px;
+    line-height: 1.8;
+    font-weight: 400;
+
+}
+
+
+a:link {
+
+    text-decoration: none;
+}
+
+a:visited {}
+
+a:hover {
+    color: #888;
+}
+
+a:active {}
+
+
+img {
+    transition: width 3s, height 3s, transform 3s;
+    z-index: -1;
+    cursor: pointer;
+    border: 1em solid rgba(0, 0, 0, 0);
+
+    /* Center an Image */
+    margin-left: auto;
+    margin-right: auto;
+
+}
+
+iframe {
+    /* Center an Image */
+    margin-left: auto;
+    margin-right: auto;
+
+    width: 1280px;
+    height: 720px;
+}
+
+/* Clear floats after the columns */
+.row:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+
+/* cursor */
+
+.grab {
+    cursor: -webkit-grab;
+    cursor: grab;
+}
+
+.grabbing {
+    cursor: -webkit-grabbing;
+    cursor: grabbing;
+}
+
+.not-allowed {
+    cursor: not-allowed;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.wait {
+    cursor: wait;
+}
+
+@media only screen and (max-width: 1024px) {
+    .script {
+        margin: 0 auto;
+        margin-top: 20%;
+        margin-bottom: 20%;
+    }
+
+    .text {
+        margin-bottom: 10%;
+    }
+
+    .comment-box {
+        display: none;
+    }
+
+    iframe {
+        margin: 0 auto;
+        width: 100%;
+    }

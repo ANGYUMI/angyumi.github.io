@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        #canvas {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: fixed;
+            position: relative;
+        }
+
+        .wrapper {
+            position: absolute;
+            display: flex;
+            margin: 0 auto;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            z-index: 3;
+        }
+
+        mark {
+            background-color: black;
+            color: #fff;
+        }
+
+        .content {
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 1.2rem;
+            line-height: 200%;
+            color: #666;
+            z-index: 3;
+        }
+
+        .error {
+            font-family: Consolas;
+            font-size: 1.2em;
+            color: black;
+            box-sizing: border-box;
+            background-color: lightcoral;
+            border-radius: 2px;
+            border-color: lightblue;
+            border-width: thin;
+            border-style: solid;
+            line-height: 1.4em;
+            cursor: pointer;
+        }
+
+        .error:hover {
+            color: black;
+            background-color: brown;
+            border-color: blue;
+        }
+
+        #message {
+            font-family: Consolas;
+            font-size: 1.2em;
+            color: #ccc;
+            background-color: black;
+            font-weight: bold;
+            z-index: 2;
+            position: absolute;
+        }
+
+        #dat_gui_container {
+            position: absolute;
+            left: 0px;
+            /* position inside relatively positioned parent */
+            top: 0px;
+            z-index: 3;
+            /* adjust as needed */
+        }
+
+        /* Pause Button Style */
+
+        /* Screenshot Button Style */
+    </style>
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <div class="content">
+            <p><mark>※ 작품 관람 안내<br>
+                    바탕화면에 있는 바로가기 아이콘(1. 작품 관람 안내- 2. 작품 감상하기 - 3. 작업 소스 Github 보기) 순서로 감상해주세요. <br>
+		    작품이 작동하지 않을 시, 바탕화면의 'Fractus' 바로가기 아이콘을 클릭하여 새로운 웹 페이지를 실행시켜주세요. <br>
+		    새로운 웹 페이지를 연 뒤, 웹 페이지의 주소창에 "localhost:9000"을 입력하고 접속해도 됩니다. <br>
+		    웹 페이지에 접속 후 화면에 모형이 뜰 때까지 기다려주세요. <br>
+                    화면에 모형이 뜨면 앞에 놓인 실제 모형을 들고 이리저리 기울여보세요. <br>
+                    화면 속의 모델이 실제 모형을 움직이는 대로 움직여진다면 제대로 실행된 것입니다. <br>
+                </mark></p>
+        </div>
+    </div>
+
+    <div id="message"></div>
+    <div id="dat_gui_container"></div>
+    <div id="container">
+        <!-- Pause Element -->
+    </div>
+
+    <!-- Screenshot Element -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/110/three.min.js"></script>
+
+    <!-- Stats.js -->
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js'></script>
+
+    <!-- dat.gui -->
+
+    <canvas id="canvas"></canvas>
+
+    <!-- Shaders -->
+
+    <script id='realisticeye_expeiment.txt' type='x-shader/x-fragment'>
+        uniform vec3        iResolution;
+uniform float       iTime;
+uniform float       iTimeDelta;
+uniform int         iFrame;
+uniform vec4        iDate;
+uniform vec3        iChannelResolution[10];
+uniform vec4        iMouse;
+uniform vec4        iMouseButton;
+uniform sampler2D   iChannel0;
+uniform sampler2D   iChannel1;
+uniform sampler2D   iChannel2;
+uniform sampler2D   iChannel3;
+uniform sampler2D   iChannel4;
+uniform sampler2D   iChannel5;
+uniform sampler2D   iChannel6;
+uniform sampler2D   iChannel7;
+uniform sampler2D   iChannel8;
+uniform sampler2D   iChannel9;
+uniform sampler2D   iKeyboard;
+uniform float       iSampleRate;
+
+#define iGlobalTime iTime
+#define iGlobalFrame iFrame
+
+#define SHADER_TOY
+
+// Created by inigo quilez - iq/2013
+// License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
+
+// A port of my 2007 demo Kindernoiser: https://www.youtube.com/watch?v=9AX8gNyrSWc (http://www.pouet.net/prod.php?which=32549)
+//
+// Info here:
+//    http://iquilezles.org/www/articles/juliasets3d/juliasets3d.htm
+//
+//
+// Related shaders
+//
+// Julia - Quaternion 1 : https://www.shadertoy.com/view/MsfGRr
+// Julia - Quaternion 2 : https://www.shadertoy.com/view/lsl3W2
+// Julia - Quaternion 3 : https://www.shadertoy.com/view/3tsyzl
+
+// antialias level (1, 2, 3...)
+ 
+#define AA 1
+
+// Normals computation:
+// 0: numerical gradient of d
+// 1: numerical gradient of G
+// 2: analytic  gradient of G
+// 3: analytic  gradient of G optimized
+#define METHOD 3
+
+vec4 qsqr( in vec4 a ) // square a quaterion
+{
+    return vec4( a.x*a.x - a.y*a.y - a.z*a.z - a.w*a.w,
+                 2.0*a.x*a.y,
+                 2.0*a.x*a.z,
+                 2.0*a.x*a.w );
+}
+vec4 qmul( in vec4 a, in vec4 b)
+{
+    return vec4(
+        a.x * b.x - a.y * b.y - a.z * b.z - a.w * b.w,
+        a.y * b.x + a.x * b.y + a.z * b.w - a.w * b.z, 
+        a.z * b.x + a.x * b.z + a.w * b.y - a.y * b.w,
+        a.w * b.x + a.x * b.w + a.y * b.z - a.z * b.y );
+
+}
+vec4 qconj( in vec4 a )
+{
+    return vec4( a.x, -a.yzw );
+}
+float qlength2( in vec4 q )
+{
+    return dot(q,q);
+}
+
+const int numIterations = 11;
+
+float map( in vec3 p, out vec4 oTrap, in vec4 c )
+{
+    vec4 z = vec4(p,0.0);
+    float md2 = 1.0;
+    float mz2 = dot(z,z);
+
+    vec4 trap = vec4(abs(z.xyz),dot(z,z));
+
+    float n = 1.0;
+    for( int i=0; i<numIterations; i++ )
+    {
+        // dz -> 2·z·dz, meaning |dz| -> 2·|z|·|dz|
+        // Now we take the 2.0 out of the loop and do it at the end with an exp2
+        md2 *= 4.0*mz2;
+        // z  -> z^2 + c
+        z = qsqr(z) + c;  
+
+        trap = min( trap, vec4(abs(z.xyz),dot(z,z)) );
+
+        mz2 = qlength2(z);
+        if(mz2>4.0) break;
+        n += 1.0;
+    }
+    
+    oTrap = trap;
+
+    return 0.25*sqrt(mz2/md2)*log(mz2);  // d = 0.5·|z|·log|z|/|z'|
+}
+
+#if METHOD==0
+vec3 calcNormal( in vec3 p, in vec4 c )
+{
+#if 1
+    vec2 e = vec2(1.0,-1.0)*0.5773*0.001;
+    vec4 za=vec4(p+e.xyy,0.0); float mz2a=qlength2(za), md2a=1.0;
+    vec4 zb=vec4(p+e.yyx,0.0); float mz2b=qlength2(zb), md2b=1.0;
+    vec4 zc=vec4(p+e.yxy,0.0); float mz2c=qlength2(zc), md2c=1.0;
+    vec4 zd=vec4(p+e.xxx,0.0); float mz2d=qlength2(zd), md2d=1.0;
+  	for(int i=0; i<numIterations; i++)
+    {
+        md2a *= mz2a; za = qsqr(za)+c; mz2a = qlength2(za);
+        md2b *= mz2b; zb = qsqr(zb)+c; mz2b = qlength2(zb);
+        md2c *= mz2c; zc = qsqr(zc)+c; mz2c = qlength2(zc);
+        md2d *= mz2d; zd = qsqr(zd)+c; mz2d = qlength2(zd);
+    }
+    return normalize( e.xyy*sqrt(mz2a/md2a)*log2(mz2a) + 
+					  e.yyx*sqrt(mz2b/md2b)*log2(mz2b) + 
+					  e.yxy*sqrt(mz2c/md2c)*log2(mz2c) + 
+					  e.xxx*sqrt(mz2d/md2d)*log2(mz2d) );
+#else    
+    const vec2 e = vec2(0.001,0.0);
+    vec4 za=vec4(p+e.xyy,0.0); float mz2a=qlength2(za), md2a=1.0;
+    vec4 zb=vec4(p-e.xyy,0.0); float mz2b=qlength2(zb), md2b=1.0;
+    vec4 zc=vec4(p+e.yxy,0.0); float mz2c=qlength2(zc), md2c=1.0;
+    vec4 zd=vec4(p-e.yxy,0.0); float mz2d=qlength2(zd), md2d=1.0;
+    vec4 ze=vec4(p+e.yyx,0.0); float mz2e=qlength2(ze), md2e=1.0;
+    vec4 zf=vec4(p-e.yyx,0.0); float mz2f=qlength2(zf), md2f=1.0;
+  	for(int i=0; i<numIterations; i++)
+    {
+        md2a *= mz2a; za = qsqr(za) + c; mz2a = qlength2(za);
+        md2b *= mz2b; zb = qsqr(zb) + c; mz2b = qlength2(zb);
+        md2c *= mz2c; zc = qsqr(zc) + c; mz2c = qlength2(zc);
+        md2d *= mz2d; zd = qsqr(zd) + c; mz2d = qlength2(zd);
+        md2e *= mz2e; ze = qsqr(ze) + c; mz2e = qlength2(ze);
+        md2f *= mz2f; zf = qsqr(zf) + c; mz2f = qlength2(zf);
+    }
+    float da = sqrt(mz2a/md2a)*log2(mz2a);
+    float db = sqrt(mz2b/md2b)*log2(mz2b);
+    float dc = sqrt(mz2c/md2c)*log2(mz2c);
+    float dd = sqrt(mz2d/md2d)*log2(mz2d);
+    float de = sqrt(mz2e/md2e)*log2(mz2e);
+    float df = sqrt(mz2f/md2f)*log2(mz2f);
+    
+    return normalize( vec3(da-db,dc-dd,de-df) );
+#endif    
+}
+#endif
+
+#if METHOD==1
+vec3 calcNormal( in vec3 p, in vec4 c )
+{
+    const vec2 e = vec2(0.001,0.0);
+    vec4 za = vec4(p+e.xyy,0.0);
+    vec4 zb = vec4(p-e.xyy,0.0);
+    vec4 zc = vec4(p+e.yxy,0.0);
+    vec4 zd = vec4(p-e.yxy,0.0);
+    vec4 ze = vec4(p+e.yyx,0.0);
+    vec4 zf = vec4(p-e.yyx,0.0);
+
+  	for(int i=0; i<numIterations; i++)
+    {
+        za = qsqr(za) + c; 
+        zb = qsqr(zb) + c; 
+        zc = qsqr(zc) + c; 
+        zd = qsqr(zd) + c; 
+        ze = qsqr(ze) + c; 
+        zf = qsqr(zf) + c; 
+    }
+    return normalize( vec3(log2(qlength2(za))-log2(qlength2(zb)),
+                           log2(qlength2(zc))-log2(qlength2(zd)),
+                           log2(qlength2(ze))-log2(qlength2(zf))) );
+
+}
+#endif
+
+#if METHOD==2
+vec3 calcNormal( in vec3 p, in vec4 c )
+{
+    vec4 z = vec4(p,0.0);
+
+    // identity derivative
+    mat4x4 J = mat4x4(1,0,0,0,  
+                      0,1,0,0,  
+                      0,0,1,0,  
+                      0,0,0,1 );
+
+  	for(int i=0; i<numIterations; i++)
+    {
+        // chain rule of jacobians (removed the 2 factor)
+        J = J*mat4x4(z.x, -z.y, -z.z, -z.w, 
+                     z.y,  z.x,  0.0,  0.0,
+                     z.z,  0.0,  z.x,  0.0, 
+                     z.w,  0.0,  0.0,  z.x);
+
+        // z -> z2 + c
+        z = qsqr(z) + c; 
+        
+        if(qlength2(z)>4.0) break;
+    }
+
+    return normalize( (J*z).xyz );
+}
+#endif
+
+#if METHOD==3
+vec3 calcNormal( in vec3 p, in vec4 c )
+{
+    vec4 z = vec4(p,0.0);
+
+    // identity derivative
+    vec4 J0 = vec4(1,0,0,0);
+    vec4 J1 = vec4(0,1,0,0);
+    vec4 J2 = vec4(0,0,1,0);
+    
+  	for(int i=0; i<numIterations; i++)
+    {
+        vec4 cz = qconj(z);
+        
+        // chain rule of jacobians (removed the 2 factor)
+        J0 = vec4( dot(J0,cz), dot(J0.xy,z.yx), dot(J0.xz,z.zx), dot(J0.xw,z.wx) );
+        J1 = vec4( dot(J1,cz), dot(J1.xy,z.yx), dot(J1.xz,z.zx), dot(J1.xw,z.wx) );
+        J2 = vec4( dot(J2,cz), dot(J2.xy,z.yx), dot(J2.xz,z.zx), dot(J2.xw,z.wx) );
+
+        // z -> z2 + c
+        z = qsqr(z) + c; 
+        
+        if(qlength2(z)>4.0) break;
+    }
+    
+	vec3 v = vec3( dot(J0,z), 
+                   dot(J1,z), 
+                   dot(J2,z) );
+
+    return normalize( v );
+}
+
+#endif
+
+float intersect( in vec3 ro, in vec3 rd, out vec4 res, in vec4 c )
+{
+    vec4 tmp;
+    float resT = -1.0;
+	float maxd = 10.0;
+    float h = 1.0;
+    float t = 0.0;
+    for( int i=0; i<300; i++ )
+    {
+        if( h<0.0001||t>maxd ) break;
+	    h = map( ro+rd*t, tmp, c );
+        t += h;
+    }
+    if( t<maxd ) { resT=t; res = tmp; }
+
+	return resT;
+}
+
+float softshadow( in vec3 ro, in vec3 rd, float mint, float k, in vec4 c )
+{
+    float res = 1.0;
+    float t = mint;
+    for( int i=0; i<64; i++ )
+    {
+        vec4 kk;
+        float h = map(ro + rd*t, kk, c);
+        res = min( res, k*h/t );
+        if( res<0.001 ) break;
+        t += clamp( h, 0.01, 0.5 );
+    }
+    return clamp(res,0.0,1.0);
+}
+
+vec3 render( in vec3 ro, in vec3 rd, in vec4 c )
+{
+	const vec3 sun = vec3(  0.577, 0.577,  0.577 );
+    
+	vec4 tra;
+	vec3 col;
+    float t = intersect( ro, rd, tra, c );
+    if( t < 0.0 )
+    {
+        // 배경색
+     	col = vec3(2.0,2.0,2.0)*(0.9+0.2*rd.y);
+		col += vec3(0.5,0.5,0.5)*pow( clamp(dot(rd,sun),0.0,1.0), 48.0 );
+	}
+	else
+	{
+        // 오브젝트 색상
+        vec3 mate = vec3(1.5,1.6,1.8)*0.3;
+		//mate.x = 1.0-10.0*tra.x;
+        
+        vec3 pos = ro + t*rd;
+        vec3 nor = calcNormal( pos, c );
+        
+		float occ = clamp(2.5*tra.w-0.15,0.0,1.0);
+		
+
+        col = vec3(0.0);
+
+        // sky
+        {
+        float co = clamp( dot(-rd,nor), 0.0, 1.0 );
+        vec3 ref = reflect( rd, nor );
+        //float sha = softshadow( pos+0.0005*nor, ref, 0.001, 4.0, c );
+        float sha = occ;
+        sha *= smoothstep( -0.1, 0.1, ref.y );
+        float fre = 0.1 + 0.9*pow(1.0-co,5.0);
+            
+		col  = mate*0.3*vec3(0.5,0.8,1.2)*(0.6+0.4*nor.y)*occ;
+		col +=  2.0*0.3*vec3(0.5,0.8,1.2)*(0.6+0.4*nor.y)*sha*fre;
+        }
+
+        // sun
+        {
+        const vec3 lig = sun;
+        float dif = clamp( dot( lig, nor ), 0.0, 1.0 );
+        float sha = softshadow( pos, lig, 0.001, 64.0, c );
+        vec3 hal = normalize( -rd+lig );
+        float co = clamp( dot(hal,lig), 0.0, 1.0 );
+        float fre = 0.04 + 0.96*pow(1.0-co,5.0);
+        float spe = pow(clamp(dot(hal,nor), 0.0, 1.0 ), 32.0 );
+        col += mate*3.5*vec3(1.00,0.90,0.70)*dif*sha;
+        col +=  7.0*3.5*vec3(1.00,0.90,0.70)*spe*dif*sha*fre;
+        }
+
+        // extra fill
+        {
+        const vec3 lig = vec3( -0.707, 0.000, -0.707 );
+		float dif = clamp(0.5+0.5*dot(lig,nor), 0.0, 1.0 );
+        col += mate* 1.5*vec3(0.14,0.14,0.14)*dif*occ;
+        }
+        
+        // fake SSS
+        {
+        float fre = clamp( 1.+dot(rd,nor), 0.0, 1.0 );
+        col += mate* mate*0.6*fre*fre*(0.2+0.8*occ);
+        }
+    }
+
+	return pow( col, vec3(0.4545) );
+}
+
+void mainImage( out vec4 fragColor, in vec2 fragCoord )
+{
+    // anim
+    float time = iTime*.15;
+    vec4 c = 0.45*cos( vec4(0.5,3.9,1.4,1.1) + time*vec4(1.2,1.7,1.3,2.5) ) - vec4(0.3,0.0,0.0,0.0);
+
+    // camera
+	float r = 1.5+0.15*cos(0.0+0.29*time);
+	vec3 ro = vec3(           r*cos(0.3+0.37*time), 
+					0.3 + 0.8*r*cos(1.0+0.33*time), 
+					          r*cos(2.2+0.31*time) );
+	vec3 ta = vec3(0.0,0.0,0.0);
+    float cr = 0.1*cos(0.1*time);
+    
+    
+    // render
+    vec3 col = vec3(0.0);
+    for( int j=0; j<AA; j++ )
+    for( int i=0; i<AA; i++ )
+    {
+        vec2 p = (-iResolution.xy + 2.0*(fragCoord + vec2(float(i),float(j))/float(AA))) / iResolution.y;
+
+        vec3 cw = normalize(ta-ro);
+        vec3 cp = vec3(sin(cr), cos(cr),0.0);
+        vec3 cu = normalize(cross(cw,cp));
+        vec3 cv = normalize(cross(cu,cw));
+        vec3 rd = normalize( p.x*cu + p.y*cv + 2.0*cw );
+
+        col += render( ro, rd, c );
+    }
+    col /= float(AA*AA);
+    
+    vec2 uv = fragCoord.xy / iResolution.xy;
+	col *= 0.7 + 0.3*pow(16.0*uv.x*uv.y*(1.0-uv.x)*(1.0-uv.y),0.25);
+    
+	fragColor = vec4( col, 1.0 );
+}
+
+void main() {
+    mainImage(gl_FragColor, gl_FragCoord.xy);
+}
+</script>
+
+    <script type="text/javascript">
+        let vscode = undefined;
+        if (typeof acquireVsCodeApi === 'function') {
+            vscode = acquireVsCodeApi();
+        }
+        var compileTimePanel;
+
+        let revealError = function(line, file) {
+            if (vscode) {
+                vscode.postMessage({
+                    command: 'showGlslsError',
+                    line: line,
+                    file: file
+                });
+            }
+        };
+
+        let currentShader = {};
+        // Error Callback
+        console.error = function() {
+            if ('7' in arguments) {
+                let errorRegex = /ERROR: \d+:(\d+):\W(.*)\n/g;
+                let rawErrors = arguments[7];
+                let match;
+
+                let diagnostics = [];
+                let message = '';
+                while (match = errorRegex.exec(rawErrors)) {
+                    let lineNumber = Number(match[1]) - currentShader.LineOffset;
+                    let error = match[2];
+                    diagnostics.push({
+                        line: lineNumber,
+                        message: error
+                    });
+                    let lineHighlight = `<a class='error' unselectable onclick='revealError(${lineNumber}, "${currentShader.File}")'>Line ${lineNumber}</a>`;
+                    message += `<li>${lineHighlight}: ${error}</li>`;
+                }
+                console.log(message);
+                let diagnosticBatch = {
+                    filename: currentShader.File,
+                    diagnostics: diagnostics
+                };
+                if (vscode !== undefined) {
+                    vscode.postMessage({
+                        command: 'showGlslDiagnostic',
+                        type: 'error',
+                        diagnosticBatch: diagnosticBatch
+                    });
+                }
+
+                $('#message').append(`<h3>Shader failed to compile - ${currentShader.Name} </h3>`);
+                $('#message').append('<ul>');
+                $('#message').append(message);
+                $('#message').append('</ul>');
+            }
+        };
+
+        // Development feature: Output warnings from third-party libraries
+        // console.warn = function (message) {
+        //     $("#message").append(message + '<br>');
+        // };
+
+        let clock = new THREE.Clock();
+        let pausedTime = 0.0;
+        let deltaTime = 0.0;
+        let startingTime = 0;
+        let time = startingTime;
+
+        let date = new THREE.Vector4();
+
+        let updateDate = function() {
+            let today = new Date();
+            date.x = today.getFullYear();
+            date.y = today.getMonth();
+            date.z = today.getDate();
+            date.w = today.getHours() * 60 * 60 +
+                today.getMinutes() * 60 +
+                today.getSeconds() +
+                today.getMilliseconds() * 0.001;
+        };
+        updateDate();
+
+        let paused = false;
+        let pauseButton = document.getElementById('pause-button');
+        if (pauseButton) {
+            pauseButton.onclick = function() {
+                paused = pauseButton.checked;
+                if (!paused) {
+                    // Audio Resume
+                    pausedTime += clock.getDelta();
+                } else {
+                    // Audio Pause
+                }
+            };
+        }
+
+        {
+            let screenshotButton = document.getElementById("screenshot");
+            if (screenshotButton) {
+                screenshotButton.addEventListener('click', saveScreenshot);
+            }
+        }
+
+        let canvas = document.getElementById('canvas');
+        let gl = canvas.getContext('webgl2');
+        let isWebGL2 = gl != null;
+        if (gl == null) gl = canvas.getContext('webgl');
+        let supportsFloatFramebuffer = (gl.getExtension('EXT_color_buffer_float') != null) || (gl.getExtension('WEBGL_color_buffer_float') != null);
+        let supportsHalfFloatFramebuffer = (gl.getExtension('EXT_color_buffer_half_float') != null);
+        let framebufferType = THREE.UnsignedByteType;
+        if (supportsFloatFramebuffer) framebufferType = THREE.FloatType;
+        else if (supportsHalfFloatFramebuffer) framebufferType = THREE.HalfFloatType;
+
+        let renderer = new THREE.WebGLRenderer({
+            canvas: canvas,
+            antialias: true,
+            context: gl,
+            preserveDrawingBuffer: true
+        });
+        let resolution = new THREE.Vector3();
+        let mouse = new THREE.Vector4(171, 180, -435, -226);
+        let mouseButton = new THREE.Vector4(0, 0, 0, 0);
+        let normalizedMouse = new THREE.Vector2(0.01639344262295082, 0.6503416856492027);
+        let frameCounter = 0;
+
+        // Audio Init
+        const audioContext = {
+            sampleRate: 0
+        };
+        // Audio Resume
+
+        let buffers = [];
+        // Buffers
+        buffers.push({
+            Name: 'realisticeye_expeiment.txt',
+            File: 'c:/Users/user/Desktop/vscode/realisticeye_expeiment.txt',
+            LineOffset: 133,
+            Target: null,
+            ChannelResolution: Array(10).fill(new THREE.Vector3(0, 0, 0)),
+            PingPongTarget: null,
+            PingPongChannel: 0,
+            Dependents: [],
+            Shader: new THREE.ShaderMaterial({
+                fragmentShader: document.getElementById('realisticeye_expeiment.txt').textContent,
+                depthWrite: false,
+                depthTest: false,
+                uniforms: {
+                    iResolution: {
+                        type: 'v3',
+                        value: resolution
+                    },
+                    iTime: {
+                        type: 'f',
+                        value: 0.0
+                    },
+                    iTimeDelta: {
+                        type: 'f',
+                        value: 0.0
+                    },
+                    iFrame: {
+                        type: 'i',
+                        value: 0
+                    },
+                    iMouse: {
+                        type: 'v4',
+                        value: mouse
+                    },
+                    iMouseButton: {
+                        type: 'v2',
+                        value: mouseButton
+                    },
+
+                    iChannelResolution: {
+                        type: 'v3v',
+                        value: Array(10).fill(new THREE.Vector3(0, 0, 0))
+                    },
+
+                    iDate: {
+                        type: 'v4',
+                        value: date
+                    },
+                    iSampleRate: {
+                        type: 'f',
+                        value: audioContext.sampleRate
+                    },
+
+                    iChannel0: {
+                        type: 't'
+                    },
+                    iChannel1: {
+                        type: 't'
+                    },
+                    iChannel2: {
+                        type: 't'
+                    },
+                    iChannel3: {
+                        type: 't'
+                    },
+                    iChannel4: {
+                        type: 't'
+                    },
+                    iChannel5: {
+                        type: 't'
+                    },
+                    iChannel6: {
+                        type: 't'
+                    },
+                    iChannel7: {
+                        type: 't'
+                    },
+                    iChannel8: {
+                        type: 't'
+                    },
+                    iChannel9: {
+                        type: 't'
+                    },
+
+                    resolution: {
+                        type: 'v2',
+                        value: resolution
+                    },
+                    time: {
+                        type: 'f',
+                        value: 0.0
+                    },
+                    mouse: {
+                        type: 'v2',
+                        value: normalizedMouse
+                    },
+                }
+            })
+        });
+        let commonIncludes = [];
+        // Includes
+
+
+        // WebGL2 inserts more lines into the shader
+        if (isWebGL2) {
+            for (let buffer of buffers) {
+                buffer.LineOffset += 16;
+            }
+        }
+
+        // Keyboard Init
+
+        // Uniforms Init
+        // Uniforms Update
+
+        let texLoader = new THREE.TextureLoader();
+        // Texture Init
+
+
+        let scene = new THREE.Scene();
+        let quad = new THREE.Mesh(
+            new THREE.PlaneGeometry(resolution.x, resolution.y),
+            null
+        );
+        scene.add(quad);
+
+        let camera = new THREE.OrthographicCamera(-resolution.x / 2.0, resolution.x / 2.0, resolution.y / 2.0, -resolution.y / 2.0, 1, 1000);
+        camera.position.set(0, 0, 10);
+
+        // Run every shader once to check for compile errors
+        let compileTimeStart = performance.now();
+        let failed = 0;
+        for (let include of commonIncludes) {
+            currentShader = {
+                Name: include.Name,
+                File: include.File,
+                // add two for version and precision lines
+                LineOffset: 26 + 2
+            };
+            // bail if there is an error found in the include script
+            if (compileFragShader(gl, document.getElementById(include.Name).textContent) == false) {
+                throw Error(`Failed to compile ${include.Name}`);
+            }
+        }
+
+        for (let buffer of buffers) {
+            currentShader = {
+                Name: buffer.Name,
+                File: buffer.File,
+                LineOffset: buffer.LineOffset
+            };
+            quad.material = buffer.Shader;
+            renderer.setRenderTarget(buffer.Target);
+            renderer.render(scene, camera);
+        }
+        currentShader = {};
+        let compileTimeEnd = performance.now();
+        let compileTime = compileTimeEnd - compileTimeStart;
+        if (compileTimePanel !== undefined) {
+            for (let i = 0; i < 200; i++) {
+                compileTimePanel.update(compileTime, 200);
+            }
+        }
+
+        computeSize();
+        render();
+
+        function addLineNumbers(string) {
+            let lines = string.split('\\n');
+            for (let i = 0; i < lines.length; i++) {
+                lines[i] = (i + 1) + ': ' + lines[i];
+            }
+            return lines.join('\\n');
+        }
+
+        function compileFragShader(gl, fsSource) {
+            const fs = gl.createShader(gl.FRAGMENT_SHADER);
+            gl.shaderSource(fs, fsSource);
+            gl.compileShader(fs);
+            if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS)) {
+                const fragmentLog = gl.getShaderInfoLog(fs);
+                console.error('THREE.WebGLProgram: shader error: ', gl.getError(), 'gl.COMPILE_STATUS', null, null, null, null, fragmentLog);
+                return false;
+            }
+            return true;
+        }
+
+        function render() {
+            requestAnimationFrame(render);
+            // Pause Whole Render
+            if (paused) return;
+
+            // Advance Time
+            deltaTime = clock.getDelta();
+            time = startingTime + clock.getElapsedTime() - pausedTime;
+            updateDate();
+
+            // Audio Update
+
+            for (let buffer of buffers) {
+                buffer.Shader.uniforms['iResolution'].value = resolution;
+                buffer.Shader.uniforms['iTimeDelta'].value = deltaTime;
+                buffer.Shader.uniforms['iTime'].value = time;
+                buffer.Shader.uniforms['iFrame'].value = frameCounter;
+                buffer.Shader.uniforms['iMouse'].value = mouse;
+                buffer.Shader.uniforms['iMouseButton'].value = mouseButton;
+
+                buffer.Shader.uniforms['resolution'].value = resolution;
+                buffer.Shader.uniforms['time'].value = time;
+                buffer.Shader.uniforms['mouse'].value = normalizedMouse;
+
+                quad.material = buffer.Shader;
+                renderer.setRenderTarget(buffer.Target);
+                renderer.render(scene, camera);
+            }
+
+            // Uniforms Update
+
+            // Keyboard Update
+
+            for (let buffer of buffers) {
+                if (buffer.PingPongTarget) {
+                    [buffer.PingPongTarget, buffer.Target] = [buffer.Target, buffer.PingPongTarget];
+                    buffer.Shader.uniforms[`iChannel${buffer.PingPongChannel}`].value = buffer.PingPongTarget.texture;
+                    for (let dependent of buffer.Dependents) {
+                        const dependentBuffer = buffers[dependent.Index];
+                        dependentBuffer.Shader.uniforms[`iChannel${dependent.Channel}`].value = buffer.Target.texture;
+                    }
+                }
+            }
+
+            frameCounter++;
+        }
+
+        function computeSize() {
+            let forceAspectRatio = (width, height) => {
+                // Forced aspect ratio
+                let forcedAspects = [0, 0];
+                let forcedAspectRatio = forcedAspects[0] / forcedAspects[1];
+                let aspectRatio = width / height;
+
+                if (forcedAspectRatio <= 0 || !isFinite(forcedAspectRatio)) {
+                    let resolution = new THREE.Vector3(width, height, 1.0);
+                    return resolution;
+                } else if (aspectRatio < forcedAspectRatio) {
+                    let resolution = new THREE.Vector3(width, Math.floor(width / forcedAspectRatio), 1);
+                    return resolution;
+                } else {
+                    let resolution = new THREE.Vector3(Math.floor(height * forcedAspectRatio), height, 1);
+                    return resolution;
+                }
+            };
+
+            // Compute forced aspect ratio and align canvas
+            resolution = forceAspectRatio(window.innerWidth, window.innerHeight);
+            canvas.style.left = `${(window.innerWidth - resolution.x) / 2}px`;
+            canvas.style.top = `${(window.innerHeight - resolution.y) / 2}px`;
+
+            for (let buffer of buffers) {
+                if (buffer.Target) {
+                    buffer.Target.setSize(resolution.x, resolution.y);
+                }
+                if (buffer.PingPongTarget) {
+                    buffer.PingPongTarget.setSize(resolution.x, resolution.y);
+                }
+            }
+            renderer.setSize(resolution.x, resolution.y, false);
+
+            // Update Camera and Mesh
+            quad.geometry = new THREE.PlaneGeometry(resolution.x, resolution.y);
+            camera.left = -resolution.x / 2.0;
+            camera.right = resolution.x / 2.0;
+            camera.top = resolution.y / 2.0;
+            camera.bottom = -resolution.y / 2.0;
+            camera.updateProjectionMatrix();
+
+            // Reset iFrame on resize for shaders that rely on first-frame setups
+            frameCounter = 0;
+        }
+
+        function saveScreenshot() {
+            let doSaveScreenshot = () => {
+                renderer.domElement.toBlob(function(blob) {
+                    let a = document.createElement('a');
+                    let url = URL.createObjectURL(blob);
+                    a.href = url;
+                    a.download = 'gl.png';
+                    a.click();
+                }, 'image/png', 1.0);
+            };
+
+            let forcedScreenshotResolution = [0, 0];
+            if (forcedScreenshotResolution[0] <= 0 || forcedScreenshotResolution[1] <= 0) {
+                renderer.render(scene, camera);
+                doSaveScreenshot();
+            } else {
+                renderer.setSize(forcedScreenshotResolution[0], forcedScreenshotResolution[1], false);
+
+                for (let buffer of buffers) {
+                    buffer.Shader.uniforms['iResolution'].value = new THREE.Vector3(forcedScreenshotResolution[0], forcedScreenshotResolution[1], 1);
+                    buffer.Shader.uniforms['resolution'].value = new THREE.Vector3(forcedScreenshotResolution[0], forcedScreenshotResolution[1], 1);
+
+                    quad.material = buffer.Shader;
+                    renderer.setRenderTarget(buffer.Target);
+                    renderer.render(scene, camera);
+                }
+
+                doSaveScreenshot();
+                renderer.setSize(resolution.x, resolution.y, false);
+            }
+        }
+
+        function updateMouse() {
+            if (vscode !== undefined) {
+                vscode.postMessage({
+                    command: 'updateMouse',
+                    mouse: {
+                        x: mouse.x,
+                        y: mouse.y,
+                        z: mouse.z,
+                        w: mouse.w
+                    },
+                    normalizedMouse: {
+                        x: normalizedMouse.x,
+                        y: normalizedMouse.y
+                    }
+                });
+            }
+        }
+        let dragging = false;
+
+        function updateNormalizedMouseCoordinates(clientX, clientY) {
+            let rect = canvas.getBoundingClientRect();
+            let mouseX = clientX - rect.left;
+            let mouseY = resolution.y - clientY - rect.top;
+
+            if (mouseButton.x + mouseButton.y != 0) {
+                mouse.x = mouseX;
+                mouse.y = mouseY;
+            }
+
+            normalizedMouse.x = mouseX / resolution.x;
+            normalizedMouse.y = mouseY / resolution.y;
+        }
+        canvas.addEventListener('mousemove', function(evt) {
+            updateNormalizedMouseCoordinates(evt.clientX, evt.clientY);
+            updateMouse();
+        }, false);
+        canvas.addEventListener('mousedown', function(evt) {
+            if (evt.button == 0)
+                mouseButton.x = 1;
+            if (evt.button == 2)
+                mouseButton.y = 1;
+
+            if (!dragging) {
+                updateNormalizedMouseCoordinates(evt.clientX, evt.clientY);
+                mouse.z = mouse.x;
+                mouse.w = mouse.y;
+                dragging = true
+            }
+
+            updateMouse();
+        }, false);
+        canvas.addEventListener('mouseup', function(evt) {
+            if (evt.button == 0)
+                mouseButton.x = 0;
+            if (evt.button == 2)
+                mouseButton.y = 0;
+
+            dragging = false;
+            mouse.z = -mouse.z;
+            mouse.w = -mouse.w;
+
+            updateMouse();
+        }, false);
+        window.addEventListener('resize', function() {
+            computeSize();
+        });
+
+        // Keyboard Callbacks
+    </script>
+</body></html>
